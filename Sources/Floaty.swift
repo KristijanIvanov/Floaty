@@ -285,6 +285,15 @@ open class Floaty: UIView {
    Button image view.
    */
   fileprivate var buttonImageView: UIImageView = UIImageView()
+    
+    /**
+     Button image view alpha.
+     */
+    @objc open var buttonImageViewAlpha: CGFloat = 1 {
+      didSet {
+        buttonImageView.alpha = buttonImageViewAlpha
+      }
+    }
   
   /**
    If you keeping touch inside button, button overlaid with tint layer.
