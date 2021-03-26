@@ -119,9 +119,23 @@ open class FloatyItem: UIView {
   @objc open var titleLabel: UILabel {
     get {
       if _titleLabel == nil {
+        let shadowView = UIView(frame: .zero)
+        shadowView.backgroundColor = .white
+        shadowView.tag = 212121
+        shadowView.layer.cornerRadius = 21 / 2
+        shadowView.layer.applySketchShadow(color: .black, alpha: 0.25, x: 0, y: 4, blur: 4, spread: 0)
         _titleLabel = UILabel()
+        _titleLabel?.textAlignment = .center
         _titleLabel?.textColor = titleColor
-        _titleLabel?.font = FloatyManager.defaultInstance().font
+        _titleLabel?.backgroundColor = .white
+        if #available(iOS 8.2, *) {
+          _titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        } else {
+          // Fallback on earlier versions
+        }
+        _titleLabel?.layer.cornerRadius = 21 / 2
+        _titleLabel?.layer.masksToBounds = true
+        insertSubview(shadowView, belowSubview: _titleLabel!)
         addSubview(_titleLabel!)
       }
       return _titleLabel!
@@ -135,6 +149,8 @@ open class FloatyItem: UIView {
     didSet {
       titleLabel.text = title
       titleLabel.sizeToFit()
+      titleLabel.frame = CGRect(x: 0, y: 0, width: 15 + titleLabel.frame.width + 15, height: 21)
+      
       if(titleLabelPosition == .left) {
         titleLabel.frame.origin.x = -titleLabel.frame.size.width - 10
       } else { //titleLabel will be on right
@@ -147,6 +163,10 @@ open class FloatyItem: UIView {
         titleLabel.transform = CGAffineTransform(scaleX: -1.0, y: 1.0);
       }else {
         titleLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0);
+      }
+      
+      if let shadowView = viewWithTag(212121) {
+        shadowView.frame = titleLabel.frame
       }
       
     }
@@ -300,4 +320,20 @@ private extension CGPoint {
     static func + (left: CGPoint, right: CGPoint) -> CGPoint {
         return CGPoint(x: left.x + right.x, y: left.y + right.y)
     }
+}
+
+extension CALayer {
+    func applySketchShadow(color: UIColor = .black, alpha: Float = 0.5, x: CGFloat = 0, y: CGFloat = 2, blur: CGFloat = 4, spread: CGFloat = 0) {
+        shadowColor = color.cgColor
+    shadowOpacity = alpha
+    shadowOffset = CGSize(width: x, height: y)
+    shadowRadius = blur / 2.0
+    if spread == 0 {
+      shadowPath = nil
+    } else {
+      let dx = -spread
+      let rect = bounds.insetBy(dx: dx, dy: dx)
+      shadowPath = UIBezierPath(rect: rect).cgPath
+    }
+  }
 }

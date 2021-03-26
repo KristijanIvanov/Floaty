@@ -39,6 +39,7 @@ class ViewController: UIViewController, FloatyDelegate {
     item.titleShadowColor = UIColor.blue
     item.titleLabelPosition = .right
     item.title = "titlePosition right"
+    item.titleColor = .black
     item.handler = { item in
       
     }
